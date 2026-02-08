@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Something Magical Awaits You, My Love ❤️</title>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #ffeef8, #f8e6ff, #fff0e6);
+            font-family: sans-serif;
+            color: #5d1a3d;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Floating particles (hearts, roses, sparkles) */
+        .particle {
+            position: fixed;
+            font-size: 28px;
+            pointer-events: none;
+            z-index: 1;
+            animation: float linear infinite;
+            opacity: 0.7;
+        }
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.7; }
+            90% { opacity: 0.7; }
+            100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+        }
+
+        /* Confetti burst on unlock */
+        .confetto {
+            position: fixed;
+            font-size: 32px;
+            pointer-events: none;
+            z-index: 999;
+            top: -50px;
+            animation: confetti-fall linear forwards;
+        }
+        @keyframes confetti-fall {
+            to {
+                transform: translateY(110vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* Teaser & Countdown */
+        #preBirthday {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+            padding: 20px;
+        }
+        .teaser {
+            font-family: 'Dancing Script', cursive;
+            font-size: 4.5rem;
+            color: #d11777;
+            text-shadow: 0 0 20px rgba(255,105,180,0.6);
+            margin-bottom: 40px;
+            animation: pulse 3s infinite;
+        }
+        #countdown {
+            font-family: 'Dancing Script', cursive;
+            font-size: 5rem;
+            color: #ff69b4;
+            letter-spacing: 5px;
+            text-shadow: 0 0 30px rgba(255,20,147,0.8);
+        }
+
+        /* Birthday Button */
+        #birthdaySection {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        #birthdayButton {
+            font-family: 'Dancing Script', cursive;
+            font-size: 4rem;
+            padding: 30px 80px;
+            background: linear-gradient(45deg, #ff1493, #ff69b4);
+            color: white;
+            border: none;
+            border-radius: 60px;
+            cursor: pointer;
+            box-shadow: 0 0 40px rgba(255,20,147,0.8);
+            animation: glow 2s infinite alternate;
+            transition: all 0.4s;
+        }
+        #birthdayButton:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 60px rgba(255,20,147,1);
+        }
+        @keyframes glow {
+            from { box-shadow: 0 0 40px rgba(255,20,147,0.8); }
+            to { box-shadow: 0 0 80px rgba(255,20,147,1); }
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Password Modal */
+        #passwordModal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            padding: 100px 20px 20px 20px;
+            overflow-y: auto;
+        }
+        .modal-content {
+            background: rgba(255,245,255,0.95);
+            padding: 50px;
+            border-radius: 30px;
+            text-align: center;
+            box-shadow: 0 0 50px rgba(255,105,180,0.8);
+            max-width: 600px;
+            width: 100%;
+        }
+        .modal-content h2 {
+            font-family: 'Parisienne', cursive;
+            font-size: 3.5rem;
+            color: #c71585;
+            margin-bottom: 20px;
+        }
+        #passwordInput {
+            padding: 15px;
+            font-size: 1.4rem;
+            border: 2px solid #ff69b4;
+            border-radius: 30px;
+            width: 300px;
+            text-align: center;
+            font-family: 'Dancing Script', cursive;
+        }
+        #submitPassword {
+            margin-top: 20px;
+            padding: 15px 40px;
+            font-size: 1.5rem;
+            background: #ff1493;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+        }
+        #errorMsg {
+            color: #ff1493;
+            margin-top: 15px;
+            font-size: 1.3rem;
+            font-family: 'Parisienne', cursive;
+        }
+
+        /* Main Content (hidden until unlocked) */
+        #mainContent {
+            opacity: 0;
+            transition: opacity 2s ease-in;
+            padding: 100px 50px 50px 50px;
+            text-align: center;
+            margin-top: 60px;
+        }
+        #mainContent.unlocked {
+            opacity: 1;
+        }
+        #mainContent h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 5.5rem;
+            color: #c71585;
+            margin-bottom: 40px;
+            text-shadow: 0 0 20px rgba(255,105,180,0.5);
+        }
+        .love-message {
+            max-width: 900px;
+            margin: 0 auto 80px;
+            font-size: 1.6rem;
+            line-height: 2;
+            font-family: 'Parisienne', cursive;
+            color: #8b1a5b;
+        }
+
+        /* Gallery */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1400px;
+            margin: 0 auto 100px;
+            padding: 0 20px;
+        }
+        .image-item {
+            position: relative;
+            overflow: visible;
+            border-radius: 20px;
+            transition: all 0.4s;
+            display: flex;
+            flex-direction: column;
+        }
+        .image-item img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            transition: all 0.5s;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(255,105,180,0.3);
+            cursor: pointer;
+            filter: blur(10px);
+            opacity: 1;
+        }
+        .image-item img.clear {
+            filter: none;
+        }
+        .image-item img.hidden {
+            opacity: 0;
+        }
+        .image-item:hover img {
+            transform: scale(1.05);
+            box-shadow: 0 20px 40px rgba(255,20,147,0.6);
+        }
+        .caption {
+            position: relative;
+            bottom: auto;
+            left: auto;
+            right: auto;
+            background: transparent;
+            padding: 20px;
+            border-radius: 0;
+            font-family: 'Parisienne', cursive;
+            font-size: 1.5rem;
+            color: #8b1a5b;
+            text-align: center;
+            line-height: 1.8;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .image-audio {
+            display: none;
+        }
+
+        /* Countdown Section */
+        #countdownSection {
+            display: none;
+            text-align: center;
+            padding: 60px 20px;
+            background: linear-gradient(135deg, rgba(255,192,203,0.2), rgba(255,182,193,0.2));
+            border-radius: 30px;
+            max-width: 800px;
+            margin: 0 auto 80px;
+        }
+        #countdownSection.show {
+            display: block;
+        }
+        #countdownSection h2 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3rem;
+            color: #c71585;
+            margin-bottom: 30px;
+        }
+        #countdownDisplay {
+            font-family: 'Dancing Script', cursive;
+            font-size: 4rem;
+            color: #ff69b4;
+            letter-spacing: 3px;
+            text-shadow: 0 0 20px rgba(255,105,180,0.6);
+        }
+
+        /* Music Section */
+        .music-section {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        .music-section h2 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 4rem;
+            margin-bottom: 50px;
+            color: #c71585;
+        }
+        .song {
+            background: rgba(255,245,255,0.9);
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(255,105,180,0.2);
+        }
+        .song p {
+            font-family: 'Parisienne', cursive;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #8b1a5b;
+        }
+        audio {
+            width: 100%;
+            height: 50px;
+        }
+
+        /* Fireworks Animation */
+        .firework {
+            position: fixed;
+            width: 5px;
+            height: 5px;
+            pointer-events: none;
+            z-index: 1000;
+        }
+        .firework::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            animation: firework-burst 1s ease-out forwards;
+        }
+        @keyframes firework-burst {
+            0% {
+                box-shadow: 0 0 0 #ff1493, 
+                           20px 20px 0 #ff69b4,
+                           -20px 20px 0 #c71585,
+                           20px -20px 0 #ff00ff,
+                           -20px -20px 0 #ffc0cb,
+                           30px 0 0 #ff1493,
+                           -30px 0 0 #ff69b4,
+                           0 30px 0 #c71585,
+                           0 -30px 0 #ff00ff,
+                           25px 15px 0 #ffc0cb,
+                           -25px 15px 0 #ff1493,
+                           25px -15px 0 #ff69b4,
+                           -25px -15px 0 #c71585;
+                opacity: 1;
+            }
+            100% {
+                box-shadow: 100px 100px 0 #ff1493,
+                           80px 120px 0 #ff69b4,
+                           120px 80px 0 #c71585,
+                           100px 20px 0 #ff00ff,
+                           140px 140px 0 #ffc0cb,
+                           180px 50px 0 #ff1493,
+                           30px 180px 0 #ff69b4,
+                           50px 30px 0 #c71585,
+                           20px 150px 0 #ff00ff,
+                           150px 70px 0 #ffc0cb,
+                           70px 150px 0 #ff1493,
+                           160px 20px 0 #ff69b4,
+                           40px 160px 0 #c71585;
+                opacity: 0;
+            }
+        }
+
+        /* Happy Birthday Marquee */
+        #birthdayMarquee {
+            position: fixed;
+            top: 0;
+            left: -500px;
+            width: 100%;
+            padding: 20px 0;
+            background: linear-gradient(90deg, rgba(255,20,147,0.1), rgba(255,105,180,0.2), rgba(255,20,147,0.1));
+            font-family: 'Dancing Script', cursive;
+            font-size: 3rem;
+            color: #183393;
+            text-shadow: 0 0 20px rgba(77, 208, 223, 0.8), 0 0 40px rgba(255,105,180,0.6);
+            white-space: nowrap;
+            z-index: 1001;
+            animation: marquee-bounce 8s linear infinite;
+            font-weight: bold;
+            letter-spacing: 5px;
+            text-align: center;
+            border-bottom: 2px solid rgba(255,105,180,0.4);
+        }
+        @keyframes marquee-bounce {
+            0% {
+                left: -500px;
+                transform: scaleY(1);
+            }
+            25% {
+                transform: scaleY(1.1);
+            }
+            50% {
+                left: 50%;
+                transform: scaleX(1.05) scaleY(1);
+            }
+            75% {
+                transform: scaleY(1.1);
+            }
+            100% {
+                left: 100vw;
+                transform: scaleY(1);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .teaser { font-size: 3rem; }
+            #countdown { font-size: 3.5rem; }
+            #birthdayButton { font-size: 2.5rem; padding: 20px 50px; }
+            #mainContent h1 { font-size: 4rem; }
+            .love-message { font-size: 1.4rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Floating particles container -->
+    <div id="particles"></div>
+
+    <!-- Before Birthday: Teaser + Countdown -->
+    <div id="preBirthday">
+        <div class="teaser">Something magical is waiting for you, my love 💕</div>
+        <div id="countdown"></div>
+    </div>
+
+    <!-- On/After March 5: Birthday Button -->
+    <div id="birthdaySection">
+        <button id="birthdayButton">Happy Birthday My Love ❤️</button>
+    </div>
+
+    <!-- Password Modal (Always Visible) -->
+    <div id="passwordModal">
+        <!-- Countdown Before Unlock -->
+        <div id="countdownBeforeUnlock" style="text-align: center; margin-bottom: 50px;">
+            <h2 style="font-family: 'Dancing Script', cursive; font-size: 2.5rem; color: #c71585; margin-bottom: 20px;">Days Until Your Special Day 💕</h2>
+            <div id="countdownBeforeDisplay" style="font-family: 'Dancing Script', cursive; font-size: 3.5rem; color: #ff69b4; letter-spacing: 2px; text-shadow: 0 0 20px rgba(255,105,180,0.6);">Loading...</div>
+        </div>
+
+        <div class="modal-content">
+            <h2>Enter Password to Unlock ❤️</h2>
+            <p style="font-family: 'Parisienne', cursive; font-size: 1.5rem; color: #8b1a5b; margin-bottom: 20px;">Solve this math problem: log<sub>10</sub>(1000) = ?</p>
+            <p style="font-family: 'Parisienne', cursive; font-size: 1.3rem; color: #c71585; margin-bottom: 30px;">If you solve this math problem and get the answer, that's the password!</p>
+            <input type="text" id="passwordInput" placeholder="Enter password...">
+            <br>
+            <button id="submitPassword">Unlock</button>
+            <p id="errorMsg"></p>
+        </div>
+    </div>
+
+    <!-- Happy Birthday Marquee -->
+    <div id="birthdayMarquee">🎉 Happy Birthday Michyy 🎉</div>
+
+    <!-- Hidden Main Content -->
+    <div id="mainContent">
+        <h1>Happy Birthday My Love ❤️</h1>
+
+        <!-- Countdown to Birthday -->
+        <div id="countdownSection">
+            <h2>Days Until Your Special Day 💕</h2>
+            <div id="countdownDisplay">Loading...</div>
+        </div>
+        
+        <div class="love-message">
+            My dearest, most beautiful love,<br><br>
+            Today the entire universe celebrates the day you came into this world, but for me, every day with you is a celebration.
+            You are my safe place, my wildest dream, my softest kiss, and my greatest adventure.
+            Your laugh rewrites my soul. Your touch rewrites my reality. Your love rewrites eternity.
+            I fall for you deeper every single day, and today I fall even harder.
+            Thank you for being my everything. This is just a tiny piece of the magic you deserve.
+            <br><br>
+            Forever, completely, hopelessly yours.<br>
+            Happy Birthday, my queen. ❤️✨<br><br>
+            Yours always,<br>
+            Andy
+        </div>
+
+        <!-- Gallery of 15 Images with Romantic Notes -->
+        <div class="gallery">
+            <div class="image-item">
+                <img src="IMG-20251027-WA0004.jpg" alt="Memory 1">
+                <div class="caption">You are the poem I never knew how to write, the song my heart sings when I'm near you. In every word, every breath, every heartbeat, you are the masterpiece my soul has always craved. ❤️</div>
+                <audio class="image-audio" src="Ed_Sheeran___Justin_Bieber_-_I_Don_t_Care__Lyrics_(256k).mp3"></audio>
+            </div>
+            <div class="image-item">
+                <img src="Snapchat-1753716237.jpg" alt="Memory 2">
+                <div class="caption">In your eyes, I found my forever home, my safe place, my infinite yes. Looking into those precious eyes is like coming home to a place my soul always knew was waiting. ✨</div>
+                <audio class="image-audio" src="Prateek_Kuhad_-_Co2__Official_Audio_(256k).mp3"></audio>
+            </div>
+            <div class="image-item">
+                <img src="20250422_170905.jpg" alt="Memory 3">
+                <div class="caption">Every love story is beautiful, but ours is a masterpiece written by the universe itself, painted by fate, and blessed by the stars. Together we are poetry in motion. 📖❤️</div>
+                <audio class="image-audio" src="Lauren_Spencer_Smith_-_That_Part__Lyric_Video_(256k).mp3"></audio>
+            </div>
+            <div class="image-item">
+                <img src="adb0d1071bb0485d965e7e006ddd1f91.jpg" alt="Memory 4">
+                <div class="caption">You make my heart smile in languages I never knew existed, in colors beyond the rainbow, in dimensions beyond time itself. With you, I discover new ways to love. 😘</div>
+                <audio class="image-audio" src="Ed_Sheeran_-_Perfect(256k).mp3"></audio>
+            </div>
+            <div class="image-item">
+                <img src="file_000000002e9c71f58c9d39de5f403126.png" alt="Memory 5">
+                <div class="caption">With you, every moment becomes a memory worth keeping, every second feels like magic woven into reality. Time stops when you hold my hand, and eternity begins with your touch. 🪄</div>
+                <audio class="image-audio" src="Lady_Gaga,_Bruno_Mars_-_Die_With_A_Smile__Official_Music_Video_(256k).mp3"></audio>
+            </div>
+            <div class="image-item">
+                <img src="20250422_170914.jpg" alt="Memory 6">
+                <div class="caption">You are my today and all of my tomorrows, my yesterday and every cherished moment between. In your love, I found the story I want to live forever across all eternities. 🌹</div>
+                <audio class="image-audio" src="Westlife_-_I_Lay_My_Love_on_You__Official_Video_(256k).mp3"></audio>
+            </div>
+            <div class="image-item">
+                <img src="IMG-20260109-WA0002.jpg" alt="Memory 7">
+                <div class="caption">Loving you is my favorite thing in the universe, and I would do it for a thousand lifetimes, across infinite dimensions. My love for you is eternal, boundless, and completely unconditional. 💫</div>
+                <audio class="image-audio" src="yung_kai_-_blue__Lyrics_(256k).mp3"></audio>
+            </div>
+            <div class="image-item">
+                <img src="IMG-20260109-WA0003.jpg" alt="Memory 8">
+                <div class="caption">Your smile is my favorite notification, your laugh is my favorite melody, you are my favorite everything. Every moment with you is a blessing I never take for granted. ✨</div>
+                <audio class="image-audio" src="Chris_Brown_-_With_You__Official_HD_Video_(256k).mp3"></audio>
+            </div>
+            <div class="image-item">
+                <img src="IMG-20260208-WA0013.jpg" alt="Memory 9">
+                <div class="caption">Together is my favorite place to be, in your arms is where my soul finds its peace and home. Every embrace is sanctuary, every kiss a promise, every moment sacred. 🏹❤️</div>
+                <audio class="image-audio" src="Meddy_-_My_Vow__Official_Video_(256k).mp3"></audio>
+            </div>
+            <div class="image-item">
+                <img src="IMG-20260208-WA0025.jpg" alt="Memory 10">
+                <div class="caption">You are my sun, my moon, all my stars, and the beautiful sky that holds them. In you I found the cosmic love I always dreamed of, the connection that transcends understanding. 🌟</div>
+                <audio class="image-audio" src="Tatiana_manaois__-__That_s_what_life_feels_like__sub_video_sharped_by_Leo_cee___lyrics(256k).mp3"></audio>
+            </div>
+            <div class="image-item">
+                <img src="IMG-20250426-WA0010.jpg" alt="Memory 11">
+                <div class="caption">In your arms, I found paradise, a sanctuary my heart never wants to leave. You are my refuge, my solace, my greatest love, and my deepest joy wrapped in one beautiful being. 🌺</div>
+                <audio class="image-audio" src="Elliot_James_Reay_-_I_Think_They_Call_This_Love__Official_Music_Video_(256k).mp3"></audio>
+            </div>
+            <div class="image-item">
+                <img src="IMG-20260208-WA0014.jpg" alt="Memory 12">
+                <div class="caption">Forever isn't long enough with you, eternity still wouldn't be enough to love you. I would spend infinite lifetimes discovering new reasons to adore you and cherish our sacred bond. ∞</div>
+                <audio class="image-audio" src="Ed_Sheeran_-_Shivers__Lyrics_(256k).mp3"></audio>
+            </div>
+            <div class="image-item">
+                <img src="IMG-20260208-WA0018.jpg" alt="Memory 13">
+                <div class="caption">You are the best part of my every day, the reason I smile before opening my eyes, the light through my darkest moments. My life is infinitely richer because you are in it. 🌸</div>
+                <audio class="image-audio" src="Arctic_Monkeys_-_I_Wanna_Be_Yours(256k).mp3"></audio>
+            </div>
+            <div class="image-item">
+                <img src="IMG-20260208-WA0024.jpg" alt="Memory 14">
+                <div class="caption">My heart still skips when I see you, still races when you touch me, still belongs only to you. Every heartbeat testifies to my love, every breath a prayer of gratitude for you. 💓</div>
+                <audio class="image-audio" src="Abigail_Chams,_Harmonize_-_Me_too__Official_Music_Video_(256k).mp3"></audio>
+            </div>
+            <div class="image-item">
+                <img src="IMG-20260208-WA0010.jpg" alt="Memory 15">
+                <div class="caption">Happy Birthday to my soulmate, my love, my everything. The world gained the most beautiful soul, but I gained my reason to believe in miracles. I love you beyond all words. 🎂❤️</div>
+                <audio class="image-audio" src="Gracie_Abrams_-_I_Love_You,_I’m_Sorry__Official_Music_Video_(256k).mp3"></audio>
+            </div>
+        </div>
+
+        <!-- Music Section -->
+        <div class="music-section">
+            <h2>🎵 Tap Any Photo to Hear Its Special Song ❤️</h2>
+            <p style="font-family: 'Parisienne', cursive; font-size: 1.8rem; color: #8b1a5b; margin-bottom: 40px;">
+                Each memory has its own soundtrack that plays when you Tap on it
+            </p>
+            
+            <div class="song">
+                <p>This Dedicate this song to you Mammaaa🫂❤️🌹</p>
+                <audio id="bgMusic" controls autoplay loop src="Alex_Warren_-_Ordinary__Official_Video_(256k).mp3"></audio>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==== CHANGE THIS TO YOUR NAME ====
+        const correctPassword = "Andchy@1477#";   // ←←← CHANGE THIS TO YOUR NAME ←←←
+        
+        const now = new Date();
+        const birthdayThisYear = new Date(now.getFullYear(), 2, 5); // March 5
+        
+        const preBirthday = document.getElementById('preBirthday');
+        const birthdaySection = document.getElementById('birthdaySection');
+        const passwordModal = document.getElementById('passwordModal');
+        const mainContent = document.getElementById('mainContent');
+        const countdownBeforeDisplay = document.getElementById('countdownBeforeDisplay');
+        const countdownSection = document.getElementById('countdownSection');
+        const countdownDisplay = document.getElementById('countdownDisplay');
+
+        // Hide pre-birthday and birthday sections, show password modal only
+        preBirthday.style.display = 'none';
+        birthdaySection.style.display = 'none';
+
+        function updateCountdown() {
+            const now = new Date();
+            const diff = birthdayThisYear - now;
+            
+            if (diff <= 0) {
+                countdownBeforeDisplay.innerHTML = "🎉 HAPPY BIRTHDAY! 🎉";
+                if (countdownDisplay) countdownDisplay.innerHTML = "🎉 HAPPY BIRTHDAY! 🎉";
+                return;
+            }
+            
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            const countdownText = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+            countdownBeforeDisplay.innerHTML = countdownText;
+            if (countdownDisplay) countdownDisplay.innerHTML = countdownText;
+        }
+
+        // Start countdown immediately (visible before unlock)
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+
+        // Floating magical particles (always active)
+        function createParticle() {
+            const particles = ['❤️', '🌸', '✨', '🌹', '💜', '💕', '🦋', '🌺'];
+            const p = document.createElement('div');
+            p.classList.add('particle');
+            p.innerText = particles[Math.floor(Math.random() * particles.length)];
+            p.style.left = Math.random() * 100 + 'vw';
+            p.style.animationDuration = (Math.random() * 15 + 10) + 's';
+            document.getElementById('particles').appendChild(p);
+            
+            setTimeout(() => p.remove(), 25000);
+        }
+        setInterval(createParticle, 400);
+
+        // Birthday button → open password modal
+        document.getElementById('birthdayButton').addEventListener('click', () => {
+            passwordModal.style.display = 'flex';
+        });
+
+        // Password submit
+        document.getElementById('submitPassword').addEventListener('click', () => {
+            const input = document.getElementById('passwordInput').value.trim();
+            // Case-insensitive comparison
+            if (input.toLowerCase() === correctPassword.toLowerCase()) {
+                unlockContent();
+            } else {
+                document.getElementById('errorMsg').innerHTML = 
+                    "That's not quite right, my love 💕<br>Try again, and solve the math I know you'll get it 😘";
+                document.getElementById('passwordInput').value = '';
+            }
+        });
+
+        // Allow Enter key
+        document.getElementById('passwordInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('submitPassword').click();
+        });
+
+        // Setup image click handlers - blurry -> clear on tap -> hidden on tap
+        function setupImageClickers() {
+            const imageItems = document.querySelectorAll('.image-item');
+            const bgMusic = document.getElementById('bgMusic');
+
+            imageItems.forEach((item) => {
+                const img = item.querySelector('img');
+                const caption = item.querySelector('.caption');
+                if (img) {
+                    img.addEventListener('click', () => {
+                        const audioPlayer = item.querySelector('.image-audio');
+
+                        if (!audioPlayer) return;
+
+                        if (img.classList.contains('hidden')) {
+                            // If hidden, make blurry and hide caption
+                            img.classList.remove('hidden');
+                            img.classList.remove('clear');
+                            if (caption) caption.style.display = 'none';
+                        } else if (!img.classList.contains('clear')) {
+                            // If blurry, make clear, show caption, and play audio
+                            img.classList.add('clear');
+                            if (caption) caption.style.display = 'block';
+
+                            // Stop other audios
+                            document.querySelectorAll('.image-audio').forEach(audio => {
+                                if (audio !== audioPlayer) {
+                                    audio.pause();
+                                    audio.currentTime = 0;
+                                }
+                            });
+
+                            // Play the song
+                            if (bgMusic) {
+                                bgMusic.pause();
+                            }
+                            audioPlayer.play().catch(err => console.log('Audio playback:', err));
+
+                            // Set up event listener for when image song ends
+                            audioPlayer.onended = () => {
+                                if (bgMusic) {
+                                    bgMusic.play().catch(err => console.log('Audio playback:', err));
+                                }
+                            };
+                        } else {
+                            // If clear, hide, hide caption, and pause
+                            img.classList.add('hidden');
+                            if (caption) caption.style.display = 'none';
+                            audioPlayer.pause();
+                            if (bgMusic) {
+                                bgMusic.play().catch(err => console.log('Audio playback:', err));
+                            }
+                        }
+                    });
+                }
+            });
+        }
+
+        // Unlock magic
+        function unlockContent() {
+            passwordModal.style.display = 'none';
+            birthdaySection.style.display = 'none';
+            mainContent.classList.add('unlocked');
+
+            // Start background music
+            setTimeout(() => {
+                const bgMusic = document.getElementById('bgMusic');
+                if (bgMusic) {
+                    bgMusic.play().catch(err => console.log('Music playback:', err));
+                }
+            }, 500);
+            
+            // Setup image click handlers
+            setupImageClickers();
+            
+            // Confetti + flower burst
+            for (let i = 0; i < 180; i++) {
+                setTimeout(() => {
+                    const c = document.createElement('div');
+                    c.classList.add('confetto');
+                    c.innerText = ['❤️','🌸','✨','🌹','💜','💕'][Math.floor(Math.random()*6)];
+                    c.style.left = Math.random() * 100 + 'vw';
+                    c.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                    document.body.appendChild(c);
+                    setTimeout(() => c.remove(), 5000);
+                }, i * 30);
+            }
+            
+            // Fireworks animation
+            createFireworks();
+        }
+        
+        // Fireworks function
+        function createFireworks() {
+            for (let i = 0; i < 15; i++) {
+                setTimeout(() => {
+                    const x = Math.random() * window.innerWidth;
+                    const y = Math.random() * window.innerHeight;
+                    
+                    const firework = document.createElement('div');
+                    firework.classList.add('firework');
+                    firework.style.left = x + 'px';
+                    firework.style.top = y + 'px';
+                    document.body.appendChild(firework);
+                    
+                    setTimeout(() => firework.remove(), 1100);
+                }, i * 150);
+            }
+        }
+    </script>
+</body>
+</html>
