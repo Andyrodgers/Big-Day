@@ -142,6 +142,32 @@
             color: #c71585;
             margin-bottom: 20px;
         }
+        #loveQuestion {
+            margin-bottom: 30px;
+        }
+        #loveQuestion h3 {
+            font-family: Georgia, 'Times New Roman', Times, serif;
+            font-size: 2rem;
+            color: #c71585;
+            margin-bottom: 20px;
+        }
+        .loveBtn {
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 1.2rem;
+            background: #ff69b4;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .loveBtn:hover {
+            background: #ff1493;
+        }
+        #passwordSection {
+            display: none;
+        }
         #passwordInput {
             padding: 15px;
             font-size: 1.4rem;
@@ -436,18 +462,27 @@
             <h2 style="font-family: Georgia, 'Times New Roman', Times, serif; font-size: 2.5rem; color: #c71585; margin-bottom: 20px;">Days Until Your Special Day 💕</h2>
             <div id="countdownBeforeDisplay" style="font-family: 'Dancing Script'; font-size: 3.5rem; color: #ff69b4; letter-spacing: 2px; text-shadow: 0 0 20px rgba(255,105,180,0.6);">Loading...</div>
         </div>
-
         <div class="modal-content">
             <h2>Enter Password to Unlock ❤️</h2>
-            <p style="font-family: Georgia, 'Times New Roman', Times, serif; font-size: 1.5rem; color: #8b1a5b; margin-bottom: 20px;">Solve this math problem: log<sub>10</sub>(1000) = ?</p>
-            <p style="font-family: Georgia, 'Times New Roman', Times, serif; font-size: 1.3rem; color: #c71585; margin-bottom: 30px;">If you solve this math problem and get the answer, that's the password!</p>
-            <div style="position: relative; display: inline-block;">
-                <input type="password" id="passwordInput" placeholder="Enter password..." style="padding-right: 50px;">
-                <button id="togglePassword" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 1.2rem;">👁️</button>
+            <div id="loveQuestion">
+                <h3>How much do you love me? 💕</h3>
+                <button class="loveBtn" data-love="20">20%</button>
+                <button class="loveBtn" data-love="40">40%</button>
+                <button class="loveBtn" data-love="60">60%</button>
+                <button class="loveBtn" data-love="80">80%</button>
+                <button class="loveBtn" data-love="100">100%</button>
+           </div>
+            <div id="passwordSection">
+                <p style="font-family: Georgia, 'Times New Roman', Times, serif; font-size: 1.5rem; color: #8b1a5b; margin-bottom: 20px;">Solve this math problem: log<sub>10</sub>(1000) = ?</p>
+                <p style="font-family: Georgia, 'Times New Roman', Times, serif; font-size: 1.3rem; color: #c71585; margin-bottom: 30px;">If you solve this math problem and get the answer, that's the password!</p>
+                <div style="position: relative; display: inline-block;">
+                    <input type="password" id="passwordInput" placeholder="Enter password..." style="padding-right: 50px;">
+                    <button id="togglePassword" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 1.2rem;">👁️</button>
+                </div>
+                <br>
+                <button id="submitPassword">Unlock</button>
+                <p id="errorMsg"></p>
             </div>
-            <br>
-            <button id="submitPassword">Unlock</button>
-            <p id="errorMsg"></p>
         </div>
     </div>
 
@@ -566,7 +601,7 @@
             
             <div class="song">
                 <p>This Dedicate this song to you Mammaaa🫂❤️🌹</p>
-                <audio id="bgMusic" controls autoplay loop src="Alex_Warren_-_Ordinary__Official_Video_(256k).mp3"></audio>
+                <audio id="bgMusic" controls loop src="Alex_Warren_-_Ordinary__Official_Video_(256k).mp3"></audio>
             </div>
         </div>
     </div>
@@ -609,7 +644,6 @@
             countdownBeforeDisplay.innerHTML = countdownText;
             if (countdownDisplay) countdownDisplay.innerHTML = countdownText;
         }
-
         // Start countdown immediately (visible before unlock)
         updateCountdown();
         setInterval(updateCountdown, 1000);
@@ -631,6 +665,32 @@
         // Birthday button → open password modal
         document.getElementById('birthdayButton').addEventListener('click', () => {
             passwordModal.style.display = 'flex';
+        });
+
+        // Love percentage buttons
+        document.querySelectorAll('.loveBtn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const love = parseInt(btn.getAttribute('data-love'));
+                if (love < 100) {
+                    // Boring tricks
+                    const tricks = [
+                        () => alert("That's sweet, but I know you love me more! 💕"),
+                        () => alert("Try again, my love! You can do better! 😘"),
+                        () => {
+                            document.body.style.background = 'gray';
+                            setTimeout(() => document.body.style.background = 'linear-gradient(135deg, #ffeef8, #f8e6ff, #fff0e6)', 2000);
+                        },
+                        () => alert("Nope! Think higher! ❤️"),
+                        () => alert("I love you too, but let's be honest... 💖")
+                    ];
+                    const randomTrick = tricks[Math.floor(Math.random() * tricks.length)];
+                    randomTrick();
+                } else {
+                    // Reveal password section
+                    document.getElementById('passwordSection').style.display = 'block';
+                    document.getElementById('loveQuestion').style.display = 'none';
+                }
+            });
         });
 
         // Password submit
@@ -724,20 +784,24 @@
 
         // Unlock magic
         function unlockContent() {
+            // Pause password music
+            const passwordMusic = document.getElementById('passwordMusic');
+            if (passwordMusic) {
+                passwordMusic.pause();
+            }
+
             passwordModal.style.display = 'none';
             birthdaySection.style.display = 'none';
             mainContent.classList.add('unlocked');
 
-            // Start background music
-            setTimeout(() => {
-                const bgMusic = document.getElementById('bgMusic');
-                if (bgMusic) {
-                    bgMusic.play().catch(err => console.log('Music playback:', err));
-                }
-            }, 500);
-            
             // Setup image click handlers
             setupImageClickers();
+
+            // Play background music automatically
+            const bgMusic = document.getElementById('bgMusic');
+            if (bgMusic) {
+                bgMusic.play().catch(err => console.log('Music playback:', err));
+            }
             
             // Confetti + flower burst
             for (let i = 0; i < 180; i++) {
