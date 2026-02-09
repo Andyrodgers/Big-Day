@@ -6,7 +6,13 @@
     <title>Something Magical Awaits You, My Love ❤️</title>
 
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+        }
         body {
             min-height: 100vh;
             background: linear-gradient(135deg, #ffeef8, #f8e6ff, #fff0e6);
@@ -14,6 +20,7 @@
             color: #5d1a3d;
             overflow-x: hidden;
             position: relative;
+            font-size: 16px;
         }
 
         /* Floating particles (hearts, roses, sparkles) */
@@ -434,7 +441,10 @@
             <h2>Enter Password to Unlock ❤️</h2>
             <p style="font-family: Georgia, 'Times New Roman', Times, serif; font-size: 1.5rem; color: #8b1a5b; margin-bottom: 20px;">Solve this math problem: log<sub>10</sub>(1000) = ?</p>
             <p style="font-family: Georgia, 'Times New Roman', Times, serif; font-size: 1.3rem; color: #c71585; margin-bottom: 30px;">If you solve this math problem and get the answer, that's the password!</p>
-            <input type="text" id="passwordInput" placeholder="Enter password...">
+            <div style="position: relative; display: inline-block;">
+                <input type="password" id="passwordInput" placeholder="Enter password..." style="padding-right: 50px;">
+                <button id="togglePassword" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 1.2rem;">👁️</button>
+            </div>
             <br>
             <button id="submitPassword">Unlock</button>
             <p id="errorMsg"></p>
@@ -639,6 +649,19 @@
         // Allow Enter key
         document.getElementById('passwordInput').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') document.getElementById('submitPassword').click();
+        });
+
+        // Toggle password visibility
+        document.getElementById('togglePassword').addEventListener('click', () => {
+            const input = document.getElementById('passwordInput');
+            const button = document.getElementById('togglePassword');
+            if (input.type === 'password') {
+                input.type = 'text';
+                button.textContent = '🙈';
+            } else {
+                input.type = 'password';
+                button.textContent = '👁️';
+            }
         });
 
         // Setup image click handlers - blurry -> clear on tap -> hidden on tap
