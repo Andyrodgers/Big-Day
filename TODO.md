@@ -1,4 +1,7 @@
+# TODO: Undo Book Animation
 
-- [x] Add logarithm math problem as a trick in the password modal
-- [x] Add message below the math problem indicating that solving it gives the password
-- [x] Ensure the real password remains unchanged in the code
+## Plan:
+- [ ] Remove CSS styles for the book animation
+- [ ] Remove HTML for the book modal
+- [ ] Remove JavaScript book functions and event listeners
+- [ ] Revert image click handlers to show caption instead of opening book

@@ -437,6 +437,7 @@
             #mainContent h1 { font-size: 4rem; }
             .love-message { font-size: 1.4rem; }
         }
+
     </style>
 </head>
 <body>
@@ -500,12 +501,25 @@
         </div>
         
         <div class="love-message">
-            My dearest, most beautiful love,<br><br>
-            Today the entire universe celebrates the day you came into this world, but for me, every day with you is a celebration.
-            You are my safe place, my wildest dream, my softest kiss, and my greatest adventure.
-            Your laugh rewrites my soul. Your touch rewrites my reality. Your love rewrites eternity.
-            I fall for you deeper every single day, and today I fall even harder.
-            Thank you for being my everything. This is just a tiny piece of the magic you deserve.
+           Happy Birthday, my love ❤️<br><br>
+
+           Today isn’t just the celebration of the day you were born. It’s the celebration of the day the world was given the exact combination of softness and strength that somehow became you. And if I’m being honest, I don’t just celebrate your existence, I feel grateful for it.
+
+           It's said that the people who change our lives aren’t always the loudest or the most dramatic. They are the ones who quietly rewire our emotional world. And that’s what you’ve done to me. You’ve shifted the way I think about love, about connection, about vulnerability. You’ve made me more aware, more intentional, more alive.
+
+           There’s something about you that goes beyond beauty, though yes, you are beautiful in a way that turns heads without trying. But what truly holds me is the architecture of your mind, the depth in your emotions, the way you feel things intensely yet still carry yourself with grace. The way you care. The way you think. The way you try. That’s rare.
+
+           On your birthday, I don’t just wish you happiness. I wish you emotional peace. I wish you the kind of self-confidence that doesn’t shake when life tests you. I wish you success that matches your intelligence. I wish you love that feels safe, the kind where you never have to question if you’re valued.
+
+           And selfishly… I’m thankful I get to be part of your story. Even if life changes, even if seasons shift, the impact you’ve had on me is permanent. You’ve left fingerprints on my heart in a way that can’t be erased.
+
+           I hope today you feel celebrated, seen, desired, appreciated, not just by me, but by everyone lucky enough to know you. But especially by me.
+
+           You are not ordinary. You are intentional. You are layered. You are powerful in ways you don’t even fully realize yet.
+
+           And I love you, not just for who you are today, but for who you’re becoming.
+
+           Happy Birthday, my heart. May this year align with every silent prayer you’ve ever whispered. 🎂✨
             <br><br>
             Forever, completely, hopelessly yours.<br>
             Happy Birthday, my queen. ❤️✨<br><br>
@@ -586,7 +600,12 @@
                 <audio class="image-audio" src="Abigail_Chams,_Harmonize_-_Me_too__Official_Music_Video_(256k).mp3"></audio>
             </div>
             <div class="image-item">
-                <img src="IMG-20260208-WA0010.jpg" alt="Memory 15">
+                <img src="A&M.jpeg" alt="">
+                <div class="caption">Every day I spend with you feels like I’m exactly where I’m meant to be. Time stands still when I’m with you, and all my doubts go away. I’ve loved you since the moment I met you, and I’ll keep choosing you every single day for a thousand years. 💓</div>
+                <audio class="image-audio" src="Christina_Perri_-_A_Thousand_Years_[Official_Music_Video](256k).mp3"></audio>
+            </div>
+            <div class="image-item">
+                <img src="IMG-20260208-WA0010.jpg" alt="Memory 16">
                 <div class="caption">Happy Birthday to my soulmate, my love, my everything. The world gained the most beautiful soul, but I gained my reason to believe in miracles. I love you beyond all words. 🎂❤️</div>
                 <audio class="image-audio" src="Gracie_Abrams_-_I_Love_You,_I’m_Sorry__Official_Music_Video_(256k).mp3"></audio>
             </div>
@@ -724,17 +743,34 @@
             }
         });
 
+        // Sequential playback system - only one image can be active at a time
+        let isSongPlaying = false;
+        let currentPlayingItem = null;
+        
         // Setup image click handlers - blurry -> clear on tap -> hidden on tap
         function setupImageClickers() {
             const imageItems = document.querySelectorAll('.image-item');
             const bgMusic = document.getElementById('bgMusic');
 
-            imageItems.forEach((item) => {
+            imageItems.forEach((item, index) => {
                 const img = item.querySelector('img');
                 const caption = item.querySelector('.caption');
+                const audioPlayer = item.querySelector('.image-audio');
+                
+                // Store the index for reference
+                item.dataset.index = index;
+                
                 if (img) {
                     img.addEventListener('click', () => {
-                        const audioPlayer = item.querySelector('.image-audio');
+                        // If a song is currently playing and it's not this image's song, prevent click
+                        if (isSongPlaying && currentPlayingItem !== item) {
+                            // Visual feedback that clicking is disabled
+                            img.style.transform = 'scale(0.95)';
+                            setTimeout(() => {
+                                img.style.transform = '';
+                            }, 150);
+                            return;
+                        }
 
                         if (!audioPlayer) return;
 
@@ -743,16 +779,28 @@
                             img.classList.remove('hidden');
                             img.classList.remove('clear');
                             if (caption) caption.style.display = 'none';
+                            isSongPlaying = false;
+                            currentPlayingItem = null;
                         } else if (!img.classList.contains('clear')) {
                             // If blurry, make clear, show caption, and play audio
                             img.classList.add('clear');
                             if (caption) caption.style.display = 'block';
 
-                            // Stop other audios
-                            document.querySelectorAll('.image-audio').forEach(audio => {
-                                if (audio !== audioPlayer) {
-                                    audio.pause();
-                                    audio.currentTime = 0;
+                            // Stop other audios and reset their states
+                            document.querySelectorAll('.image-item').forEach((otherItem) => {
+                                if (otherItem !== item) {
+                                    const otherImg = otherItem.querySelector('img');
+                                    const otherCaption = otherItem.querySelector('.caption');
+                                    const otherAudio = otherItem.querySelector('.image-audio');
+                                    if (otherImg) {
+                                        otherImg.classList.remove('clear');
+                                        otherImg.classList.add('hidden');
+                                    }
+                                    if (otherCaption) otherCaption.style.display = 'none';
+                                    if (otherAudio) {
+                                        otherAudio.pause();
+                                        otherAudio.currentTime = 0;
+                                    }
                                 }
                             });
 
@@ -760,10 +808,20 @@
                             if (bgMusic) {
                                 bgMusic.pause();
                             }
+                            isSongPlaying = true;
+                            currentPlayingItem = item;
+                            
+                            // Add playing indicator style
+                            item.classList.add('playing');
+                            
                             audioPlayer.play().catch(err => console.log('Audio playback:', err));
 
                             // Set up event listener for when image song ends
                             audioPlayer.onended = () => {
+                                isSongPlaying = false;
+                                currentPlayingItem = null;
+                                item.classList.remove('playing');
+                                
                                 if (bgMusic) {
                                     bgMusic.play().catch(err => console.log('Audio playback:', err));
                                 }
@@ -773,6 +831,10 @@
                             img.classList.add('hidden');
                             if (caption) caption.style.display = 'none';
                             audioPlayer.pause();
+                            isSongPlaying = false;
+                            currentPlayingItem = null;
+                            item.classList.remove('playing');
+                            
                             if (bgMusic) {
                                 bgMusic.play().catch(err => console.log('Audio playback:', err));
                             }
